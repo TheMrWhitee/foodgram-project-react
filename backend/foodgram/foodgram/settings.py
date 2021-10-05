@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'djoser',
 ]
@@ -137,13 +138,16 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
-SIMPLE_JWT = {
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
-   'AUTH_HEADER_TYPES': ('Bearer',),
-}
-
 AUTH_USER_MODEL = 'users.User'
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.CustomUserCreateSerializer',
+        'user': 'users.serializers.CustomUserSerializer'
+    },
+    'HIDE_USERS': False,
+}
