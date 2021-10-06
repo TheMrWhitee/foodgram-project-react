@@ -40,6 +40,8 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to='recipes/')
     text = models.TextField()
     cooking_time = models.IntegerField()
+    is_favorited = models.BooleanField(default=False)
+    is_in_shopping_cart = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
