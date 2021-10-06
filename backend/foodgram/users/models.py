@@ -9,4 +9,4 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254)
     first_name = models.CharField(max_length=150, verbose_name='First name')
     last_name = models.CharField(max_length=150, verbose_name='Last name')
-    is_subscribed = models.BooleanField(default=False, blank=True)
+    is_subscribed = models.BooleanField(default=False)

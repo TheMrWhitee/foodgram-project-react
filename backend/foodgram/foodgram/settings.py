@@ -143,7 +143,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 6
+    'PAGE_SIZE': 10
 }
 
 AUTH_USER_MODEL = 'users.User'
@@ -154,4 +154,6 @@ DJOSER = {
         'user': 'users.serializers.CustomUserSerializer'
     },
     'HIDE_USERS': False,
+
+    'LOGIN_FIELD': 'email'
 }
