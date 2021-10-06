@@ -7,6 +7,7 @@ coreschema==0.0.4
 cryptography==35.0.0
 defusedxml==0.7.1
 Django==3.2.7
+django-colorfield==0.4.3
 django-environ==0.7.0
 django-filter==21.1
 django-templated-mail==1.1.1
@@ -28,6 +29,7 @@ mccabe==0.6.1
 oauthlib==3.1.1
 pep8-naming==0.12.1
 Pillow==8.3.2
+pkg_resources==0.0.0
 psycopg2-binary==2.9.1
 pycodestyle==2.7.0
 pycparser==2.20

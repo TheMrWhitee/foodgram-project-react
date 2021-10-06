@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -22,7 +23,7 @@ class Component(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
-    color = models.CharField(max_length=7)
+    color = ColorField(default='#FF0000')
     slug = models.SlugField(unique=True)
 
     def __str__(self):
