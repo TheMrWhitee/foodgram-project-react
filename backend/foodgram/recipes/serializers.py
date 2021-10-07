@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from .models import Recipe, Tag, Ingredient, Component
+
 from users.serializers import CustomUserSerializer
+
+from .models import Component, Ingredient, Recipe, Tag
 
 
 class ComponentSerializer(serializers.ModelSerializer):
@@ -36,4 +38,4 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
-                  'cooking_time', )
+                  'cooking_time')
