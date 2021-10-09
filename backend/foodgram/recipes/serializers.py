@@ -31,8 +31,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
-                                              many=True)
+    tags = TagSerializer(many=True, read_only=True)
     ingredients = ComponentSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField(max_length=None, use_url=True)
@@ -44,7 +43,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'cooking_time')
 
     def create(self, validated_data):
-        tags = validated_data.pop('tags')
+        tags = self.initial_data.pop('tags')
         ingredients = self.initial_data.pop('ingredients')
         recipe = Recipe.objects.create(**validated_data,
                                        author=self.context['request'].user)
