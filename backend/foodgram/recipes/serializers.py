@@ -60,3 +60,24 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.ingredients.add(component)
 
         return recipe
+
+    def update(self, recipe, validated_data):
+        tags = self.initial_data.pop('tags')
+        ingredients = self.initial_data.pop('ingredients')
+
+        Recipe.objects.filter(pk=recipe.pk).update(**validated_data)
+        recipe = Recipe.objects.get(pk=recipe.pk)
+
+        recipe.tags.set(tags)
+        recipe.ingredients.set('')
+
+        for ingredient in ingredients:
+            ingredient_id = ingredient['id']
+            amount = ingredient['amount']
+            component = Component.objects.create(
+                ingredient=Ingredient.objects.get(pk=ingredient_id),
+                amount=amount
+            )
+            recipe.ingredients.add(component)
+
+        return recipe

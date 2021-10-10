@@ -1,5 +1,6 @@
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
 User = get_user_model()
@@ -39,7 +40,12 @@ class Recipe(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='recipes/')
     text = models.TextField()
-    cooking_time = models.IntegerField()
+    cooking_time = models.IntegerField(
+        validators=(
+            MinValueValidator(1, message='Время приготовления должно '
+                                         'быть больше 0!'),
+        )
+    )
     is_favorited = models.BooleanField(default=False)
     is_in_shopping_cart = models.BooleanField(default=False)
 
