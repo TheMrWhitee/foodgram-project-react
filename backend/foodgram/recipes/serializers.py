@@ -50,21 +50,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
 
-
-class RecipeCreateSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True)
-    # tags = serializers.PrimaryKeyRelatedField(many=True,
-    #                                           queryset=Tag.objects.all())
-    ingredients = ComponentSerializer(many=True)
-    author = CustomUserSerializer(read_only=True)
-    image = Base64ImageField(max_length=None, use_url=True)
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
-                  'cooking_time')
-
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -83,23 +68,23 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             recipe.ingredients.add(component)
         return recipe
 
-    # def update(self, recipe, validated_data):
-    #     tags = self.initial_data.pop('tags')
-    #     ingredients = self.initial_data.pop('ingredients')
-    #
-    #     Recipe.objects.filter(pk=recipe.pk).update(**validated_data)
-    #     recipe = Recipe.objects.get(pk=recipe.pk)
-    #
-    #     recipe.tags.set(tags)
-    #     recipe.ingredients.set('')
-    #
-    #     for ingredient in ingredients:
-    #         ingredient_id = ingredient['id']
-    #         amount = ingredient['amount']
-    #         component = Component.objects.create(
-    #             ingredient=Ingredient.objects.get(pk=ingredient_id),
-    #             amount=amount
-    #         )
-    #         recipe.ingredients.add(component)
-    #
-    #     return recipe
+    def update(self, recipe, validated_data):
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+
+        Recipe.objects.filter(pk=recipe.pk).update(**validated_data)
+        recipe = Recipe.objects.get(pk=recipe.pk)
+
+        recipe.tags.set(tags)
+        recipe.ingredients.set('')
+
+        for ingredient in ingredients:
+            ingredient_id = ingredient['ingredient']['id']
+            amount = ingredient['amount']
+            component = Component.objects.create(
+                ingredient=Ingredient.objects.get(pk=ingredient_id),
+                amount=amount
+            )
+            recipe.ingredients.add(component)
+
+        return recipe
