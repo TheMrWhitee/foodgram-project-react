@@ -7,6 +7,18 @@ from users.serializers import CustomUserSerializer
 from .models import Component, Ingredient, Recipe, Tag
 
 
+def add_ingredients(instance, values):
+    for ingredient in values:
+        ingredient_id = ingredient['ingredient']['id']
+        amount = ingredient['amount']
+        component = Component.objects.create(
+            ingredient=Ingredient.objects.get(pk=ingredient_id),
+            amount=amount
+        )
+        instance.ingredients.add(component)
+    return instance
+
+
 class ComponentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
@@ -58,15 +70,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
 
-        for ingredient in ingredients:
-            ingredient_id = ingredient['ingredient']['id']
-            amount = ingredient['amount']
-            component = Component.objects.create(
-                ingredient=Ingredient.objects.get(pk=ingredient_id),
-                amount=amount
-            )
-            recipe.ingredients.add(component)
-        return recipe
+        return add_ingredients(recipe, ingredients)
 
     def update(self, recipe, validated_data):
         tags = validated_data.pop('tags')
@@ -78,13 +82,4 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         recipe.ingredients.set('')
 
-        for ingredient in ingredients:
-            ingredient_id = ingredient['ingredient']['id']
-            amount = ingredient['amount']
-            component = Component.objects.create(
-                ingredient=Ingredient.objects.get(pk=ingredient_id),
-                amount=amount
-            )
-            recipe.ingredients.add(component)
-
-        return recipe
+        return add_ingredients(recipe, ingredients)
