@@ -1,6 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from users.serializers import CustomUserSerializer
 
