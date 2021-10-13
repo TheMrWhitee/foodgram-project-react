@@ -27,7 +27,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class FavoritesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.user.is_anonymous:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            data = {'detail': 'Учетные данные не были предоставлены.'}
+            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
         recipe = get_object_or_404(Recipe, pk=kwargs['id'])
         favorite = Favorites.objects.get_or_create(owner=request.user)
@@ -35,7 +36,8 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         if Favorites.objects.filter(
                 owner=request.user, recipes=recipe
         ).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            data = {'errors': 'Рецепт уже есть в избранном.'}
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         favorite[0].recipes.add(recipe)
         serializer = FavoritesSerializer(recipe,
