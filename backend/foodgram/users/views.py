@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -17,7 +18,13 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        following = User.objects.get(pk=kwargs['id'])
+        following = get_object_or_404(User, pk=kwargs['id'])
+
+        if Follow.objects.filter(
+                user=request.user, following=following
+        ).exists() or following == request.user:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         Follow.objects.create(user=request.user, following=following)
         serializer = FollowSerializer([following],
                                       context={'request': request},
