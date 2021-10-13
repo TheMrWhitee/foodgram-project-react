@@ -9,9 +9,10 @@ router.register('recipes', RecipeViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientViewSet)
 
-favorite_create = FavoritesViewSet.as_view({'get': 'create'})
+favorite = FavoritesViewSet.as_view({'get': 'create',
+                                     'delete': 'destroy'})
 
 urlpatterns = [
-    path('recipes/<int:id>/favorite/', favorite_create),
+    path('recipes/<int:id>/favorite/', favorite),
     path('', include(router.urls)),
 ]
