@@ -44,11 +44,19 @@ class FavoritesViewSet(viewsets.ModelViewSet):
                                          context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # def destroy(self, request, *args, **kwargs):
-    #     following = User.objects.get(pk=kwargs['id'])
-    #     instance = Follow.objects.get(user=request.user, following=following)
-    #     self.perform_destroy(instance)
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-    #
-    # def perform_destroy(self, instance):
-    #     instance.delete()
+    def destroy(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            data = {'detail': 'Учетные данные не были предоставлены.'}
+            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+
+        recipe = get_object_or_404(Recipe, pk=kwargs['id'])
+
+        if not Favorites.objects.filter(
+                owner=request.user, recipes=recipe
+        ).exists():
+            data = {'errors': 'Рецепта нет в избранном.'}
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        favorites = Favorites.objects.get(owner=request.user)
+        favorites.recipes.remove(recipe)
+        return Response(status=status.HTTP_204_NO_CONTENT)
