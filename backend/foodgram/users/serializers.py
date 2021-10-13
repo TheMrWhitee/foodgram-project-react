@@ -39,8 +39,12 @@ class FollowRecipeSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(CustomUserSerializer):
     recipes = FollowRecipeSerializer(many=True)
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed', 'recipes')
+                  'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
