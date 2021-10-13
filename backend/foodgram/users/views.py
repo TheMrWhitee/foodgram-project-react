@@ -18,6 +18,9 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         following = get_object_or_404(User, pk=kwargs['id'])
 
         if Follow.objects.filter(
