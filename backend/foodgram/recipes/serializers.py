@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from users.serializers import CustomUserSerializer
 
-from .models import Component, Ingredient, Recipe, Tag
+from .models import Component, Favorites, Ingredient, Recipe, Tag
 
 
 def add_ingredients(instance, values):
@@ -83,3 +83,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe.ingredients.set('')
 
         return add_ingredients(recipe, ingredients)
+
+
+class FavoritesSerializer(RecipeSerializer):
+    class Meta(RecipeSerializer.Meta):
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time', )

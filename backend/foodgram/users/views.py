@@ -11,6 +11,9 @@ User = get_user_model()
 
 class FollowViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         followings = User.objects.filter(following__user=request.user)
         serializer = FollowSerializer(followings,
                                       context={'request': request},
@@ -29,9 +32,8 @@ class FollowViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         Follow.objects.create(user=request.user, following=following)
-        serializer = FollowSerializer([following],
-                                      context={'request': request},
-                                      many=True)
+        serializer = FollowSerializer(following,
+                                      context={'request': request})
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):

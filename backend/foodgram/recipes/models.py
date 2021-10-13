@@ -51,3 +51,11 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Favorites(models.Model):
+    owner = models.ForeignKey(User,
+                              on_delete=models.CASCADE,
+                              related_name='favorites')
+
+    recipes = models.ManyToManyField(Recipe)
