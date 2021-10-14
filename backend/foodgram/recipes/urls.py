@@ -9,16 +9,13 @@ router.register('recipes', RecipeViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientViewSet)
 
-favorite = FavoritesViewSet.as_view()
+favorite = FavoritesViewSet.as_view({'get': 'create',
+                                     'delete': 'destroy'})
 
 urlpatterns = [
-    path('recipes/<int:id>/favorite/', favorite, {'model': 'Favorites',
-                                                  'get': 'create',
-                                                  'delete': 'destroy'}),
+    path('recipes/<int:id>/favorite/', favorite, {'model': 'Favorites'}),
     path(
-        'recipes/<int:id>/shopping_cart/', favorite, {'model': 'ShoppingCart',
-                                                      'get': 'create',
-                                                      'delete': 'destroy'}
+        'recipes/<int:id>/shopping_cart/', favorite, {'model': 'ShoppingCart'}
     ),
     path('recipes/download_shopping_cart/', download_shopping_cart),
     path('', include(router.urls)),
