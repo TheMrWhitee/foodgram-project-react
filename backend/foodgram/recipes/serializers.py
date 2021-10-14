@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from users.serializers import CustomUserSerializer
 
-from .models import Component, Favorites, Ingredient, Recipe, Tag
+from .models import Component, Favorites, Ingredient, Recipe, ShoppingCart, Tag
 
 
 def add_ingredients(instance, values):
@@ -55,12 +55,26 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = ComponentSerializer(many=True)
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField(max_length=None, use_url=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
+
+    def get_is_favorited(self, obj):
+        user = self.context['request'].user
+        if Favorites.objects.filter(owner=user, recipes=obj).exists():
+            return True
+        return False
+
+    def get_is_in_shopping_cart(self, obj):
+        user = self.context['request'].user
+        if ShoppingCart.objects.filter(owner=user, recipes=obj).exists():
+            return True
+        return False
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')

@@ -27,11 +27,11 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class FavoritesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
-        model = apps.get_model('recipes', kwargs['model'])
-
         if request.user.is_anonymous:
             data = {'detail': 'Учетные данные не были предоставлены.'}
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+
+        model = apps.get_model('recipes', kwargs['model'])
 
         recipe = get_object_or_404(Recipe, pk=kwargs['id'])
         favorite = model.objects.get_or_create(owner=request.user)
@@ -48,11 +48,11 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
-        model = apps.get_model('recipes', kwargs['model'])
-
         if request.user.is_anonymous:
             data = {'detail': 'Учетные данные не были предоставлены.'}
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+
+        model = apps.get_model('recipes', kwargs['model'])
 
         recipe = get_object_or_404(Recipe, pk=kwargs['id'])
 
