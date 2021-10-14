@@ -65,16 +65,14 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'cooking_time')
 
     def get_is_favorited(self, obj):
-        user = self.context['request'].user
-        if Favorites.objects.filter(owner=user, recipes=obj).exists():
-            return True
-        return False
+        return Favorites.objects.filter(
+            owner=self.context['request'].user, recipes=obj
+        ).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        user = self.context['request'].user
-        if ShoppingCart.objects.filter(owner=user, recipes=obj).exists():
-            return True
-        return False
+        return ShoppingCart.objects.filter(
+                owner=self.context['request'].user, recipes=obj
+        ).exists()
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
