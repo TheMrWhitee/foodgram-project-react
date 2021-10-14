@@ -13,6 +13,9 @@ favorite = FavoritesViewSet.as_view({'get': 'create',
                                      'delete': 'destroy'})
 
 urlpatterns = [
-    path('recipes/<int:id>/favorite/', favorite),
+    path('recipes/<int:id>/favorite/', favorite, {'model': 'Favorites'}),
+    path(
+        'recipes/<int:id>/shopping_cart/', favorite, {'model': 'ShoppingCart'}
+    ),
     path('', include(router.urls)),
 ]

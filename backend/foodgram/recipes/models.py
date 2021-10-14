@@ -59,3 +59,11 @@ class Favorites(models.Model):
                               related_name='favorites')
 
     recipes = models.ManyToManyField(Recipe)
+
+
+class ShoppingCart(models.Model):
+    owner = models.ForeignKey(User,
+                              on_delete=models.CASCADE,
+                              related_name='shopping_cart')
+
+    recipes = models.ManyToManyField(Recipe)
