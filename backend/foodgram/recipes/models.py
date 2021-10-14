@@ -36,7 +36,8 @@ class Recipe(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                related_name='recipes')
-    ingredients = models.ManyToManyField(Component)
+    ingredients = models.ManyToManyField(Component,
+                                         related_name='recipes')
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='recipes/')
     text = models.TextField()
@@ -66,4 +67,5 @@ class ShoppingCart(models.Model):
                               on_delete=models.CASCADE,
                               related_name='shopping_cart')
 
-    recipes = models.ManyToManyField(Recipe)
+    recipes = models.ManyToManyField(Recipe,
+                                     related_name='shopping_cart')

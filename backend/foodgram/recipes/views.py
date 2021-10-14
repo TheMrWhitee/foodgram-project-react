@@ -1,9 +1,12 @@
 from django.apps import apps
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Favorites, Ingredient, Recipe, Tag
+from .models import Ingredient, Recipe, Tag
 from .serializers import (FavoritesSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
 
@@ -65,3 +68,31 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         favorites = model.objects.get(owner=request.user)
         favorites.recipes.remove(recipe)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def download_shopping_cart(request):
+    if request.user.is_anonymous:
+        data = {'detail': 'Учетные данные не были предоставлены.'}
+        return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+
+    shopping_cart = Recipe.objects.filter(
+        shopping_cart__owner=request.user
+    ).order_by(
+        'ingredients__ingredient__name'
+    ).values(
+        'ingredients__ingredient__name',
+        'ingredients__ingredient__measurement_unit'
+    ).annotate(
+        total=Sum('ingredients__amount')
+    )
+
+    output = ''
+    for item in shopping_cart:
+        output += (f"{item['ingredients__ingredient__name']}, "
+                   f"{item['ingredients__ingredient__measurement_unit']} "
+                   f"{item['total']}\n")
+
+    response = HttpResponse(output, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="shop.txt"'
+    return response

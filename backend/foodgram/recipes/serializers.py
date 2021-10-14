@@ -11,11 +11,11 @@ def add_ingredients(instance, values):
     for ingredient in values:
         ingredient_id = ingredient['ingredient']['id']
         amount = ingredient['amount']
-        component = Component.objects.create(
+        component = Component.objects.get_or_create(
             ingredient=Ingredient.objects.get(pk=ingredient_id),
             amount=amount
         )
-        instance.ingredients.add(component)
+        instance.ingredients.add(component[0])
     return instance
 
 
