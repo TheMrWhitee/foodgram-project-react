@@ -65,11 +65,15 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'cooking_time')
 
     def get_is_favorited(self, obj):
+        if self.context['request'].user.is_anonymous:
+            return False
         return Favorites.objects.filter(
             owner=self.context['request'].user, recipes=obj
         ).exists()
 
     def get_is_in_shopping_cart(self, obj):
+        if self.context['request'].user.is_anonymous:
+            return False
         return ShoppingCart.objects.filter(
                 owner=self.context['request'].user, recipes=obj
         ).exists()
