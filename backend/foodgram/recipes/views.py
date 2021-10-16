@@ -2,11 +2,13 @@ from django.apps import apps
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .filters import RecipeFilter
 from .models import Ingredient, Recipe, Tag
 from .permissions import AdminOrAuthorOrReadOnly
 from .serializers import (FavoritesSerializer, IngredientSerializer,
@@ -17,6 +19,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = [AdminOrAuthorOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
