@@ -15,10 +15,12 @@ class FollowViewSet(viewsets.ModelViewSet):
             data = {'detail': 'Пользователь не авторизован.'}
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
+        recipes_limit = self.request.query_params.get('recipes_limit')
         followings = User.objects.filter(following__user=request.user)
         page = self.paginate_queryset(followings)
         serializer = FollowSerializer(page,
-                                      context={'request': request},
+                                      context={'request': request,
+                                               'recipes_limit': recipes_limit},
                                       many=True)
         return self.get_paginated_response(serializer.data)
 
