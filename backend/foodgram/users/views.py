@@ -16,10 +16,11 @@ class FollowViewSet(viewsets.ModelViewSet):
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
         followings = User.objects.filter(following__user=request.user)
-        serializer = FollowSerializer(followings,
+        page = self.paginate_queryset(followings)
+        serializer = FollowSerializer(page,
                                       context={'request': request},
                                       many=True)
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         if request.user.is_anonymous:
