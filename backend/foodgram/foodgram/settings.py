@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_PAGINATION_CLASS':
-        'recipes.paginations.CustomPagination',
+        'recipes.pagination.CustomPagination',
     'PAGE_SIZE': 6
 }
 
