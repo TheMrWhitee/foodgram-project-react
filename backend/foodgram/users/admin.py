@@ -6,7 +6,7 @@ from .models import Follow, User
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name')
     search_fields = ('username',)
-    list_filter = ('username',)
+    list_filter = ('username', 'email')
     empty_value_display = '-пусто-'
 
 

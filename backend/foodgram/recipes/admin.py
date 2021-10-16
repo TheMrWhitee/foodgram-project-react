@@ -18,10 +18,14 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'text')
+    list_display = ('name', 'author', 'text', 'is_favorite')
     search_fields = ('name',)
-    list_filter = ('name',)
+    list_filter = ('name', 'author', 'tags')
     empty_value_display = '-пусто-'
+
+    def is_favorite(self, obj):
+        print(obj)
+        return obj.favorites.count()
 
 
 class ComponentAdmin(admin.ModelAdmin):
