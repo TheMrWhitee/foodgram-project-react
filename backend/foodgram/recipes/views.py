@@ -4,9 +4,11 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Ingredient, Recipe, Tag
+from .permissions import AdminOrAuthorOrReadOnly
 from .serializers import (FavoritesSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
 
@@ -14,6 +16,7 @@ from .serializers import (FavoritesSerializer, IngredientSerializer,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    permission_classes = [AdminOrAuthorOrReadOnly]
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -29,11 +32,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class FavoritesViewSet(viewsets.ModelViewSet):
-    def create(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            data = {'detail': 'Учетные данные не были предоставлены.'}
-            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+    permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
         model = apps.get_model('recipes', kwargs['model'])
 
         recipe = get_object_or_404(Recipe, pk=kwargs['id'])
@@ -51,10 +52,6 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            data = {'detail': 'Учетные данные не были предоставлены.'}
-            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
-
         model = apps.get_model('recipes', kwargs['model'])
 
         recipe = get_object_or_404(Recipe, pk=kwargs['id'])
@@ -73,7 +70,7 @@ class FavoritesViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def download_shopping_cart(request):
     if request.user.is_anonymous:
-        data = {'detail': 'Учетные данные не были предоставлены.'}
+        data = {'detail': 'Пользователь не авторизован.'}
         return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
     shopping_cart = Recipe.objects.filter(

@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Follow
@@ -10,11 +11,9 @@ User = get_user_model()
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    def list(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            data = {'detail': 'Пользователь не авторизован.'}
-            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+    permission_classes = [IsAuthenticated]
 
+    def list(self, request, *args, **kwargs):
         recipes_limit = self.request.query_params.get('recipes_limit')
         followings = User.objects.filter(following__user=request.user)
         page = self.paginate_queryset(followings)
@@ -25,10 +24,6 @@ class FollowViewSet(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            data = {'detail': 'Учетные данные не были предоставлены.'}
-            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
-
         following = get_object_or_404(User, pk=kwargs['id'])
 
         if Follow.objects.filter(
@@ -44,10 +39,6 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            data = {'detail': 'Учетные данные не были предоставлены.'}
-            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
-
         following = User.objects.get(pk=kwargs['id'])
 
         if not Follow.objects.filter(
