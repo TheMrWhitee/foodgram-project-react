@@ -13,7 +13,7 @@ def add_ingredients(instance, values):
         ingredient_id = ingredient['ingredient']['id']
         amount = ingredient['amount']
         component = Component.objects.bulk_create(Component(
-            ingredient=Ingredient.objects.get(pk=ingredient_id),
+            ingredient=ingredient_id,
             amount=amount)
         )
         instance.ingredients.add(component[0])
