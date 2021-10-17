@@ -3,6 +3,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from prettytable import PrettyTable
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -88,12 +89,13 @@ def download_shopping_cart(request):
         total=Sum('ingredients__amount')
     )
 
-    output = ''
+    table = PrettyTable()
+    table.field_names = ['Ингредиент', 'Ед-ца', 'Количество']
     for item in shopping_cart:
-        output += (f"{item['ingredients__ingredient__name']}, "
-                   f"{item['ingredients__ingredient__measurement_unit']} "
-                   f"{item['total']}\n")
+        table.add_row([item['ingredients__ingredient__name'],
+                       item['ingredients__ingredient__measurement_unit'],
+                       item['total']])
 
-    response = HttpResponse(output, content_type='text/plain')
+    response = HttpResponse(table, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="shop.txt"'
     return response
