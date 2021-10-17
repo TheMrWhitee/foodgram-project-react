@@ -93,8 +93,8 @@ def download_shopping_cart(request):
     table.field_names = ['Ингредиент', 'Ед-ца', 'Количество']
     for item in shopping_cart:
         table.add_row([item['ingredients__ingredient__name'],
-                       item['ingredients__ingredient__measurement_unit'],
-                       item['total']])
+                       item['total'],
+                       item['ingredients__ingredient__measurement_unit']])
 
     response = HttpResponse(table, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="shop.txt"'
