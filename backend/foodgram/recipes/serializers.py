@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -11,9 +12,9 @@ def add_ingredients(instance, values):
     for ingredient in values:
         ingredient_id = ingredient['ingredient']['id']
         amount = ingredient['amount']
-        component = Component.objects.get_or_create(
+        component = Component.objects.bulk_create(Component(
             ingredient=Ingredient.objects.get(pk=ingredient_id),
-            amount=amount
+            amount=amount)
         )
         instance.ingredients.add(component[0])
     return instance
@@ -78,6 +79,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 owner=self.context['request'].user, recipes=obj
         ).exists()
 
+    @transaction.atomic
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -88,6 +90,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         return add_ingredients(recipe, ingredients)
 
+    @transaction.atomic
     def update(self, recipe, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
