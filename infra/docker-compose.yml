@@ -9,7 +9,8 @@ services:
       - ../backend/foodgram/.env
 
   backend:
-    build: ../backend
+    image: themrwhitee/foodgram:1.0
+#    build: ../backend
     restart: always
     volumes:
       - static_value:/code/static/
