@@ -68,7 +68,9 @@ jobs:
             sudo docker pull themrwhitee/foodgram:1.0
             #остановка всех контейнеров
             sudo docker stop $(sudo docker ps -a -q)
-            sudo docker run --rm -d -p 5000:5000 themrwhitee/foodgram:1.0
+            sudo docker-compose up
+#            sudo docker run --rm -d -p 5000:5000 themrwhitee/foodgram:1.0
+
 
   send_message:
     runs-on: ubuntu-latest
