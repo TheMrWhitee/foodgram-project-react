@@ -41,6 +41,17 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class FavoritesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
+    def list(self, request, *args, **kwargs):
+        model = apps.get_model('recipes', kwargs['model'])
+        queryset = self.filter_queryset(model.objects.all())
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+    # def filter_queryset(self, queryset):
+    #     for backend in list(self.filter_backends):
+    #         queryset = backend().filter_queryset(self.request, queryset, self)
+    #     return queryset
+
     def create(self, request, *args, **kwargs):
         model = apps.get_model('recipes', kwargs['model'])
 
