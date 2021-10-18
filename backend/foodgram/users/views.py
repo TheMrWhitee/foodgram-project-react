@@ -47,7 +47,7 @@ class FollowViewSet(viewsets.ModelViewSet):
             data = {'errors': 'Подписки не существует.'}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-        instance = Follow.objects.get(user=request.user, following=following)
+        instance = Follow.objects.filter(user=request.user, following=following)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
