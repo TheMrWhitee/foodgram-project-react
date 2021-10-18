@@ -40,8 +40,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class FavoritesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_class = RecipeFilter
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
 
     def list(self, request, *args, **kwargs):
         model = apps.get_model('recipes', kwargs['model'])
