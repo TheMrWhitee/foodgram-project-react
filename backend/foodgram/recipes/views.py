@@ -40,14 +40,12 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class FavoritesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    filter_class = RecipeFilter
 
     def create(self, request, *args, **kwargs):
         model = apps.get_model('recipes', kwargs['model'])
 
         recipe = get_object_or_404(Recipe, pk=kwargs['id'])
-        favorite = model.objects.get_or_create(owner=request.user)
+        favorite = model.objects.get_or_create(owner=request.user)[0]
 
         if model.objects.filter(
                 owner=request.user, recipes=recipe
@@ -55,7 +53,7 @@ class FavoritesViewSet(viewsets.ModelViewSet):
             data = {'errors': 'Уже есть в избранном.'}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-        favorite[0].recipes.add(recipe)
+        favorite.recipes.add(recipe)
         serializer = FavoritesSerializer(recipe,
                                          context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
