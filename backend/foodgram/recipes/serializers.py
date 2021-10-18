@@ -94,11 +94,13 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, recipe, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
+        image = validated_data.pop('image')
 
         Recipe.objects.filter(pk=recipe.pk).update(**validated_data)
         recipe = Recipe.objects.get(pk=recipe.pk)
 
         recipe.tags.set(tags)
+        recipe.image.set(image)
         recipe.ingredients.set('')
 
         return add_ingredients(recipe, ingredients)
