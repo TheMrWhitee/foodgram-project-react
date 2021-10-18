@@ -39,15 +39,14 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        following = User.objects.filter(pk=kwargs['id'])
-
         if not Follow.objects.filter(
-                user=request.user, following=following
+                user=request.user, following=User(pk=kwargs['id'])
         ).exists():
             data = {'errors': 'Подписки не существует.'}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-        instance = Follow.objects.filter(user=request.user, following=following)
+        instance = Follow.objects.filter(user=request.user,
+                                         following=User(pk=kwargs['id']))
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
