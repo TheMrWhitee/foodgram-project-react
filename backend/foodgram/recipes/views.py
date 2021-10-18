@@ -17,7 +17,7 @@ from .serializers import (FavoritesSerializer, IngredientSerializer,
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('pk')
     serializer_class = RecipeSerializer
     permission_classes = [AdminOrAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
@@ -40,6 +40,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class FavoritesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    filterset_class = RecipeFilter
 
     def create(self, request, *args, **kwargs):
         model = apps.get_model('recipes', kwargs['model'])
