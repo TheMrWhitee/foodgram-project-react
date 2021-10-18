@@ -6,5 +6,5 @@ RUN pip install --upgrade pip &&\
     pip install -r /code/requirements.txt &&\
     python managy.py makemigrations &&\
     python managy.py migrate &&\
-    python managy.py collectstatic &&\
+    python managy.py collectstatic
 CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
