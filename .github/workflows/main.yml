@@ -71,10 +71,6 @@ jobs:
             #сборка и запуск всех контейнеров
             cd foodgram-project-react/infra
             sudo docker-compose up -d
-            #миграции и сборка статики
-            sudo docker exec -it infra_backend_1 python manage.py makemigrations
-            sudo docker exec -it infra_backend_1 python manage.py migrate
-            sudo docker exec -it infra_backend_1 python manage.py collectstatic
 
   send_message:
     runs-on: ubuntu-latest
