@@ -50,9 +50,10 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def filter_queryset(self, queryset):
-        filter_backends = [RecipeFilter]
+        filter_backends = [DjangoFilterBackend]
         for backend in list(filter_backends):
-            queryset = backend().filter_queryset(self.request)
+            queryset = backend().filter_queryset(self.request, queryset,
+                                                 view=self)
         return queryset
 
     def create(self, request, *args, **kwargs):
