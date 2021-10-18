@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from .filters import IngredientFilter, RecipeFilter
 from .models import Ingredient, Recipe, Tag
 from .permissions import AdminOrAuthorOrReadOnly
 from .serializers import (FavoritesSerializer, IngredientSerializer,
@@ -33,6 +33,7 @@ class TagViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filterset_class = IngredientFilter
     pagination_class = None
 
 

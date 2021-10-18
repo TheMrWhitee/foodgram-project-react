@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
@@ -58,3 +59,14 @@ class FollowSerializer(CustomUserSerializer):
             recipes = Recipe.objects.filter(author=obj)[:int(recipes_limit)]
         serializer = FollowRecipeSerializer(recipes, many=True)
         return serializer.data
+
+    # def validate(self, data):
+    #     user = self.context['request'].user
+    #     following = data['following']
+    #
+    #     if Follow.objects.filter(
+    #             user=user, following=following
+    #     ).exists() or following == user:
+    #         raise ValidationError('Подписка уже существует или попытка '
+    #                               'подписаться на себя.')
+    #     return data

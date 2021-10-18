@@ -9,14 +9,16 @@ from .models import Component, Favorites, Ingredient, Recipe, ShoppingCart, Tag
 
 
 def add_ingredients(instance, values):
+    components = []
     for ingredient in values:
         ingredient_id = ingredient['ingredient']['id']
         amount = ingredient['amount']
-        component = Component.objects.get_or_create(
-            ingredient=ingredient_id,
-            amount=amount
+        components.append(
+            Component.objects.get_or_create(
+                ingredient=Ingredient(pk=ingredient_id),
+                amount=amount)[0]
         )
-        instance.ingredients.add(component[0])
+    instance.ingredients.add(*components)
     return instance
 
 
@@ -94,13 +96,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, recipe, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        image = validated_data.pop('image')
 
         Recipe.objects.filter(pk=recipe.pk).update(**validated_data)
         recipe = Recipe.objects.get(pk=recipe.pk)
 
         recipe.tags.set(tags)
-        recipe.image.set(image)
         recipe.ingredients.set('')
 
         return add_ingredients(recipe, ingredients)

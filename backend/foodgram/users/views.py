@@ -39,7 +39,7 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        following = User.objects.get(pk=kwargs['id'])
+        following = User.objects.filter(pk=kwargs['id'])
 
         if not Follow.objects.filter(
                 user=request.user, following=following
