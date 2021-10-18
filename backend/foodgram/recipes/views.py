@@ -17,7 +17,7 @@ from .serializers import (FavoritesSerializer, IngredientSerializer,
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all().order_by('pk')
+    queryset = Recipe.objects.all().order_by('-pk')
     serializer_class = RecipeSerializer
     permission_classes = [AdminOrAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
