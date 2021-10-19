@@ -37,7 +37,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def create_or_delete_favorite(request, **kwargs):
+def favorites(request, **kwargs):
     model = apps.get_model('recipes', kwargs['model'])
     recipe = get_object_or_404(Recipe, pk=kwargs['id'])
 
@@ -60,8 +60,8 @@ def create_or_delete_favorite(request, **kwargs):
         data = {'errors': 'Отсутствует в избранном.'}
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-    favorites = model.objects.get(owner=request.user)
-    favorites.recipes.remove(recipe)
+    favorite = model.objects.get(owner=request.user)
+    favorite.recipes.remove(recipe)
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
