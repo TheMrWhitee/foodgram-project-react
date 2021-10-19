@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -23,32 +24,30 @@ class FollowViewSet(viewsets.ModelViewSet):
                                       many=True)
         return self.get_paginated_response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        following = get_object_or_404(User, pk=kwargs['id'])
 
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def subscriptions(request, **kwargs):
+    following_user = get_object_or_404(User, pk=kwargs['id'])
+
+    if request.method == 'GET':
         if Follow.objects.filter(
-                user=request.user, following=following
-        ).exists() or following == request.user:
-            data = {'errors': 'Подписка уже существует или попытка '
-                              'подписаться на самого себя!'}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-        Follow.objects.create(user=request.user, following=following)
-        serializer = FollowSerializer(following,
-                                      context={'request': request})
-        return Response(serializer.data)
-
-    def destroy(self, request, *args, **kwargs):
-        if not Follow.objects.filter(
-                user=request.user, following=User(pk=kwargs['id'])
+                user=request.user, following=following_user
         ).exists():
-            data = {'errors': 'Подписки не существует.'}
+            data = {'errors': 'Уже есть подписка.'}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-        instance = Follow.objects.filter(user=request.user,
-                                         following=User(pk=kwargs['id']))
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        Follow.objects.create(user=request.user, following=following_user)
+        serializer = FollowSerializer(following_user,
+                                      context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def perform_destroy(self, instance):
-        instance.delete()
+    if not Follow.objects.filter(
+            user=request.user, following=following_user
+    ).exists():
+        data = {'errors': 'Подписка отсутствует.'}
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+    subscribe = Follow.objects.get(user=request.user, following=following_user)
+    subscribe.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
