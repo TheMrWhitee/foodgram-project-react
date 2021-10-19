@@ -96,8 +96,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, recipe, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        recipe.image = validated_data.pop('image')
-        Recipe.objects.filter(pk=recipe.pk).update(**validated_data)
+        recipe.name = validated_data.pop('name')
+        recipe.text = validated_data.pop('text')
+        if validated_data.get('image') is not None:
+            recipe.image = validated_data.pop('image')
+        recipe.cooking_time = validated_data.pop('cooking_time')
         recipe.save()
         recipe.tags.set(tags)
         recipe.ingredients.set('')
