@@ -47,10 +47,10 @@ class TagSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         try:
-            tag = Tag.objects.get(id=data)
+            Tag.objects.get(id=data)
         except ObjectDoesNotExist:
             raise ValidationError('Wrong tag id')
-        return tag
+        return Tag.objects.get(id=data)
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -78,7 +78,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         if self.context['request'].user.is_anonymous:
             return False
         return ShoppingCart.objects.filter(
-                owner=self.context['request'].user, recipes=obj
+            owner=self.context['request'].user, recipes=obj
         ).exists()
 
     @transaction.atomic
