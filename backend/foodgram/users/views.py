@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Follow
-from .serializers import FollowSerializer
+from .serializers import FollowCreateSerializer, FollowSerializer
 
 User = get_user_model()
 
@@ -29,25 +29,17 @@ class FollowViewSet(viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated])
 def subscriptions(request, **kwargs):
     following_user = get_object_or_404(User, pk=kwargs['id'])
-
     if request.method == 'GET':
-        if Follow.objects.filter(
-                user=request.user, following=following_user
-        ).exists():
-            data = {'errors': 'Уже есть подписка.'}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-        Follow.objects.create(user=request.user, following=following_user)
+        data = {'user': request.user.id, 'following': kwargs['id']}
+        serializer = FollowCreateSerializer(data=data,
+                                            context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         serializer = FollowSerializer(following_user,
                                       context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    if not Follow.objects.filter(
-            user=request.user, following=following_user
-    ).exists():
-        data = {'errors': 'Подписка отсутствует.'}
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-    subscribe = Follow.objects.get(user=request.user, following=following_user)
+    subscribe = get_object_or_404(Follow, user=request.user,
+                                  following=following_user)
     subscribe.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+

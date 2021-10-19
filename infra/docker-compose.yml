@@ -9,9 +9,6 @@ services:
       - ../backend/foodgram/foodgram/.env
 
   backend:
-#    build:
-#      context: ../backend
-#      dockerfile: Dockerfile
     image: themrwhitee/foodgram:1.0
     restart: always
     volumes:
