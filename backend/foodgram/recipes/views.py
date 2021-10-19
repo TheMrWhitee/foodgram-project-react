@@ -35,59 +35,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
 
-class FavoritesViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    filterset_class = RecipeFilter
-
-    # def list(self, request, *args, **kwargs):
-    #     model = apps.get_model('recipes', kwargs['model'])
-    #     queryset = self.filter_queryset(model.objects.all())
-    #     serializer = FavoritesSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-    #
-    # def filter_queryset(self, queryset):
-    #     filter_backends = [DjangoFilterBackend]
-    #     for backend in list(filter_backends):
-    #         queryset = backend().filter_queryset(self.request, queryset,
-    #                                              view=self)
-    #     return queryset
-
-    # def create(self, request, *args, **kwargs):
-    #     model = apps.get_model('recipes', kwargs['model'])
-    #
-    #     recipe = get_object_or_404(Recipe, pk=kwargs['id'])
-    #     favorite = model.objects.get_or_create(owner=request.user)[0]
-    #
-    #     if model.objects.filter(
-    #             owner=request.user, recipes=recipe
-    #     ).exists():
-    #         data = {'errors': 'Уже есть в избранном.'}
-    #         return Response(data, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     favorite.recipes.add(recipe)
-    #     serializer = FavoritesSerializer(recipe,
-    #                                      context={'request': request})
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #
-    # def destroy(self, request, *args, **kwargs):
-    #     model = apps.get_model('recipes', kwargs['model'])
-    #
-    #     recipe = get_object_or_404(Recipe, pk=kwargs['id'])
-    #
-    #     if not model.objects.filter(
-    #             owner=request.user, recipes=recipe
-    #     ).exists():
-    #         data = {'errors': 'Отсутствует в избранном.'}
-    #         return Response(data, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     favorites = model.objects.get(owner=request.user)
-    #     favorites.recipes.remove(recipe)
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 @api_view(['GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def fv(request, **kwargs):
+def create_or_delete_favorite(request, **kwargs):
     model = apps.get_model('recipes', kwargs['model'])
     recipe = get_object_or_404(Recipe, pk=kwargs['id'])
 
@@ -97,6 +47,7 @@ def fv(request, **kwargs):
         ).exists():
             data = {'errors': 'Уже есть в избранном.'}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
         favorite = model.objects.get_or_create(owner=request.user)[0]
         favorite.recipes.add(recipe)
         serializer = FavoritesSerializer(recipe,
