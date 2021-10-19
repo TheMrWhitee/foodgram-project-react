@@ -1,24 +1,24 @@
 version: '3.3'
 services:
 
-#  db:
-#    image: postgres:12.4
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
-#    env_file:
-#      - ../backend/foodgram/foodgram/.env
+  db:
+    image: postgres:12.4
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../backend/foodgram/foodgram/.env
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
-#    image: themrwhitee/foodgram:1.0
+#    build:
+#      context: ../backend
+#      dockerfile: Dockerfile
+    image: themrwhitee/foodgram:1.0
     restart: always
     volumes:
       - static_value:/code/static/
       - media_value:/code/media/
-#    depends_on:
-#      - db
+    depends_on:
+      - db
     env_file:
       - ../backend/foodgram/foodgram/.env
 
@@ -28,8 +28,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
-#    depends_on:
-#      - db
+    depends_on:
+      - db
 
   nginx:
     image: nginx:1.19.3
@@ -44,11 +44,11 @@ services:
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
     restart: always
     depends_on:
-#      - db
+      - db
       - backend
       - frontend
 
 volumes:
-#  postgres_data:
+  postgres_data:
   static_value:
   media_value:
