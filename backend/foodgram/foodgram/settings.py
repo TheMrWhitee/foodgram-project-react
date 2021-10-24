@@ -168,8 +168,6 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny']
     },
 
-    'SEND_ACTIVATION_EMAIL': True,
-
     'HIDE_USERS': False,
 
     'LOGIN_FIELD': 'email'
