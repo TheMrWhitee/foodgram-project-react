@@ -18,7 +18,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
                   'password')
         validators = [
             RegexValidator(
-                regex=r'^[\w.@+-]+\z',
+                regex=r'^[A-Za-z0-9]+$',
                 fields=['username'],
                 message='Недопустимый username.'
             )
