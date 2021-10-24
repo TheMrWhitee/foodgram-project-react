@@ -18,7 +18,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
                   'password')
 
     def validate_username(self, username):
-        validator = RegexValidator(regex=r'^[A-Za-z0-9]+$',
+        validator = RegexValidator(regex=r'^[\w.@+-]+\Z',
                                    message='Недопустимый username.')
         if validator(username):
             raise validator.message
