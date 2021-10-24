@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -15,6 +16,13 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         model = User
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
                   'password')
+
+    def validate_username(self, username):
+        validator = RegexValidator(regex=r'^[A-Za-z0-9]+$',
+                                   message='Недопустимый username.')
+        if validator(username):
+            raise validator.message
+        return username
 
 
 class CustomUserSerializer(UserSerializer):
