@@ -26,6 +26,6 @@ Python 3.7+, Django 3.1+, Django REST Framework, Djoser, Docker, Docker-compose,
 
 Документация на API будет доступна по адресу /api/docs/redoc.html
 
-Для ознакомления приложение запущено по адресу: http://foodgramyndx.co.vu/
+Для ознакомления приложение запущено по адресу: http://foodgramyndx.co.vu/recipes
 
 ![example workflow](https://github.com/TheMrWhitee/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
