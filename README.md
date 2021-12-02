@@ -29,4 +29,4 @@ Python 3.7+, Django 3.1+, Django REST Framework, Djoser, Docker, Docker-compose,
 
 Для ознакомления приложение запущено по адресу: http://foodgramyndx.co.vu/recipes
 
-![example workflow](https://github.com/TheMrWhitee/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
+![example workflow](https://github.com/TheMrWhitee/foodgram-project-react/actions/workflows/main.yml/badge.svg)
